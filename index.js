@@ -30,6 +30,15 @@ app.post('/login', (req, res) => {
     
     // CONSULTA SQL VULNERÁVEL 🚨
     const query = `SELECT * FROM users WHERE username = '${username}' AND password = '${password}'`;
+
+    /* 
+        Para fazer esse login sem usuario e senha, foi colocado uma condicional no user que sempre será verdadeira: 'OR 1 = 1 --
+        Então a consulta muda para:
+        SELECT * FROM users WHERE username = '${username}' OR 1 = 1 -- AND password = 'senha';
+
+        Então como essa consulta sempre será verdadeira, o banco vai retornar todos os usuários e permitir o login mesmo sem ser algum dos usuários já cadastrados
+    */
+    
     
     db.all(query, [], (err, rows) => {
         if (err) {
